@@ -1,0 +1,7 @@
+Power usage:
+SainSmart relay: 15-20ma per relay
+Arduino:         ~50ma
+Raspberry Pi:    ~200 (500 to be safe)
+
+http://www.digikey.com/en/resources/conversion-calculators/conversion-calculator-battery-life
+~14 hours with 10ah 12v battery 
