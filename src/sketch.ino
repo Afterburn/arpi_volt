@@ -6,12 +6,13 @@ int aux_pin_state = 0;
 int now           = 0;
 int voltage_warn  = 0;
 int last_voltage  = -1;
-int wait_time     = 30;
+int wait_time     = 120;
 
 unsigned long  start_time = 0;
 
 // Based on http://www.energymatters.com.au/components/battery-voltage-discharge/ 
-float low_voltage   = 12.20;
+float shut_off_voltage   = 12.20;
+float power_on_voltage   = 12.70;
 float voltage     = 0;
 
 
@@ -60,22 +61,6 @@ void nominal_voltage_routine()
 }
 
 
-void reset_timer()
-{
-    start_time = 0;
-}
-
-void start_timer()
-{
-    start_time = millis();
-}
-
-unsigned long elapsed_time()
-{
-    return millis() - start_time;
-}
-
-
 void setup()
 {
     Serial.begin(9600);
@@ -108,7 +93,7 @@ void loop()
 
     /* Basically this triple checks that the voltage is low so we don't sit there  
        and flip the relay on and off just because it had an incorrect reading */  
-    if (voltage < low_voltage)
+    if (voltage <= shut_off_voltage)
     {
             if (voltage_warn < 3)
             {
@@ -125,27 +110,16 @@ void loop()
         }
 
     }
-    /* Ensure the timer stays at 0 because we are still low on voltage */
+    
     if (voltage_warn == 3)
     {
         low_voltage_routine();
-        reset_timer();
     }
 
-    /* If the voltage is back to normal see if the aux_pin is off. If it 
-       is off, wait 5 minutes to make sure, then turn on the relay. */
-    else if (voltage_warn == 0)
+    
+    else if (voltage >= power_on_voltage && aux_pin_state == 0)
     {
-        if (aux_pin_state == 0 && start_time == 0)
-        {
-            start_timer();
-        }
-
-        else if (aux_pin_state == 0 && start_time != 0 && elapsed_time() >= 300000)
-        {
-            nominal_voltage_routine();
-            reset_timer();
-        }
+        nominal_voltage_routine();
     }
     
     /* Turn voltage into an int */
