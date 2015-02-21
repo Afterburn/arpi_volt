@@ -2,16 +2,23 @@ import os
 import datetime
 import serial
 import time
+import create_db
+
+class WatchVoltageError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
 
 from sql.db_connect import Connect
 
 db_path = 'sqlite:///%s/stats.db' % (os.getcwd())
+
+
 db = Connect(db_path)
 
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-
-
-
 
 
 
