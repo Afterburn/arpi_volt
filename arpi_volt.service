@@ -1,0 +1,13 @@
+[Unit]
+Description=Monitor and store battery voltages
+#After=network.targe
+
+[Service]
+User=root
+Group=root
+ExecStart=/etc/arpi_volt/log_voltage.py /dev/ttyAMA0
+WorkingDirectory=/etc/arpi_volt
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,3 +1,5 @@
+#!/usr/bin/python2.7
+
 import os
 import datetime
 import serial
@@ -14,7 +16,9 @@ args = parser.parse_args()
 db_path = 'sqlite:///%s/stats.db' % (os.getcwd())
 db = Connect(db_path)
 
-#ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=1)
+
+
+
 ser = serial.Serial(args.port, 9600, timeout=1)
 
 
@@ -60,9 +64,5 @@ if __name__ == '__main__':
 
         if 'voltage' in data:
             print('voltage: %s' % (data['voltage']))
-
-         
-
-
-
+            add_voltage(data['voltage'])
 
