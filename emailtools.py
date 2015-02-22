@@ -24,10 +24,10 @@ class EmailTools():
 
 
 
+if __name__ == '__main__':
+    with open('config', 'r') as cfg:
+        config = json.loads(cfg.read())
 
-with open('config', 'r') as cfg:
-    config = json.loads(cfg.read())
-
-e = EmailTools(config)
-e.send_email(config['email']['to'], 'RP up', 'some message')
+        e = EmailTools(config)
+        e.send_email(config['email']['to'], 'RP up', 'some message')
 
