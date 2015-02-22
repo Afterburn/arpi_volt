@@ -8,13 +8,11 @@ Base   = declarative_base()
 
 class Stats(Base):
     __tablename__ = "stats"
-    id      = Column(Integer, primary_key=True)
-    voltage = Column(Float)
-    read_time = Column(DateTime)
-
+    id       = Column(Integer, primary_key=True)
+    voltage  = Column(Float)
+    lv_warn  = Column(Integer)
+    time = Column(DateTime)
 
 engine = create_engine('sqlite:///stats.db')
-
-#stats_schema.create_engine('sqlite:///stats.db')
 
 Base.metadata.create_all(engine)

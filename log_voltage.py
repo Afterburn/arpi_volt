@@ -27,8 +27,16 @@ def parse_serial(line):
         return {'arduino':'ready'}
 
     else:
-        voltage = float(line.split(":")[0])/100
-        return {'voltage':voltage}
+        try:
+            split_line = line.split(":")
+            voltage = float(split_line[0])/100
+            lv_warn = int(split_line[1])
+        
+            return {'voltage':voltage, 'lv_warn':lv_warn}
+
+        except Exception as e:
+            print(e)
+            return {}
 
 
 def sanitize_serial(line):
@@ -40,9 +48,10 @@ def sanitize_serial(line):
     else:
         return line
 
-def add_voltage(voltage):
+def add_data(voltage, lv_warn):
     q = db.base.classes.stats(voltage=voltage,
-                              read_time=datetime.datetime.now())
+                              time=datetime.datetime.now(),
+                              lv_warn=lv_warn)
     db.session.add(q)
     db.session.commit()
 
@@ -62,7 +71,13 @@ if __name__ == '__main__':
             if data['arduino'] == 'ready':
                 print('arduino is ready')
 
-        if 'voltage' in data:
-            print('voltage: %s' % (data['voltage']))
-            add_voltage(data['voltage'])
+        if 'voltage' in data and 'lv_warn' in data:
+            print('voltage: %s, lv_warn: %s' % (data['voltage'], data['lv_warn']))
+            add_data(data['voltage'], data['lv_warn'])
 
+        else:
+            print('incomplete data')
+
+
+
+         
