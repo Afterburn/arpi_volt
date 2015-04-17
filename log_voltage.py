@@ -12,12 +12,8 @@ parser.add_argument('port', action='store')
 
 args = parser.parse_args()
 
-
-db_path = 'sqlite:///%s/stats.db' % (os.getcwd())
-db = Connect(db_path)
-
-
-
+db_uri = 'mysql+mysqldb://root:password@localhost/stats'
+db = Connect(db_uri)
 
 ser = serial.Serial(args.port, 9600, timeout=1)
 

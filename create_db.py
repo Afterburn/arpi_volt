@@ -13,6 +13,8 @@ class Stats(Base):
     lv_warn  = Column(Integer)
     time = Column(DateTime)
 
-engine = create_engine('sqlite:///stats.db')
+engine = create_engine('mysql+mysqldb://root:password@localhost')
+engine.execute("CREATE DATABASE stats")
+engine.execute("USE stats")
 
 Base.metadata.create_all(engine)
