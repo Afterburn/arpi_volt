@@ -1,0 +1,6 @@
+
+[settings]
+db-uri       = mysql+mysqldb://root:password@localhost/stats
+baudrate     = 9600
+serial-port  = /dev/ttyAMA0
+log-path     = /etc/arpi_volt/log

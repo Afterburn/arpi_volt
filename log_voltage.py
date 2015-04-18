@@ -4,19 +4,37 @@ import os
 import datetime
 import serial
 import argparse
+import logging
+from ConfigParser import ConfigParser
 
 from sql.db_connect import Connect
 
-parser = argparse.ArgumentParser()
-parser.add_argument('port', action='store')
+config   = ConfigParser()
+config_paths = ['/etc/arpi_volt/config', '%s/config' % (os.getcwd())]
 
-args = parser.parse_args()
+for path in config_paths:
+    if os.path.exists(path):
+        config.read(path)
+        break
 
-db_uri = 'mysql+mysqldb://root:password@localhost/stats'
-db = Connect(db_uri)
+if not config:
+    print('Unable to load config')
+    exit(1)
 
-ser = serial.Serial(args.port, 9600, timeout=1)
+log_path = config.get('settings','log-path')
+baudrate = config.get('settings','baudrate')
+port     = config.get('settings','serial-port')
+db_uri   = config.get('settings','db-uri')
+db       = Connect(db_uri)
 
+logging.basicConfig(filename=log_path, 
+                    format='%(asctime)s:%(levelname)s -- %(message)s', 
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    level=logging.DEBUG)
+
+logging.info('starting')
+
+ser = serial.Serial(port, baudrate, timeout=1)
 
 def parse_serial(line):
     if line == 'ready':
@@ -31,7 +49,7 @@ def parse_serial(line):
             return {'voltage':voltage, 'lv_warn':lv_warn}
 
         except Exception as e:
-            print(e)
+            logging.warn('unable to parse serial: %s' % (line))
             return {}
 
 
